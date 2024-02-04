@@ -41,6 +41,7 @@
             "nb": 1,
             "allowedKeys": [0, 0, 0, 0, 1, 0, 0, 0],
             "action": 411,
+            "posY": 0,
             "offsetX": -50
         }
     },

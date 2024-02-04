@@ -1369,6 +1369,10 @@ int __fastcall CBattleManager_OnProcess(SokuLib::BattleManager *This)
 	players[3]->roundLost = players[1]->roundLost;
 	players[2]->kdAnimationFinished = players[0]->kdAnimationFinished;
 	players[3]->kdAnimationFinished = players[1]->kdAnimationFinished;
+	players[0]->score = max(players[0]->score, players[2]->score);
+	players[1]->score = max(players[1]->score, players[3]->score);
+	players[2]->score = max(players[0]->score, players[2]->score);
+	players[3]->score = max(players[1]->score, players[3]->score);
 	return ret;
 }
 
@@ -2175,19 +2179,6 @@ void __stdcall loadDeckData(char *charName, void *csvFile, SokuLib::DeckInfo &de
 		spawned = true;
 		index = 2;
 
-		SokuLib::CharacterManager** players = (SokuLib::CharacterManager**)((int)&SokuLib::getBattleMgr() + 0xC);
-
-		puts("Not spawned. Loading both assisters");
-		puts("Loading character 1");
-		((void (__thiscall *)(GameDataManager*, int, SokuLib::PlayerInfo &))0x46da40)(dataMgr, 2, assists.first);
-		(*(void (__thiscall **)(SokuLib::CharacterManager *))(*(int *)dataMgr->players[2] + 0x44))(dataMgr->players[2]);
-		players[2] = dataMgr->players[2];
-
-		puts("Loading character 2");
-		((void (__thiscall *)(GameDataManager*, int, SokuLib::PlayerInfo &))0x46da40)(dataMgr, 3, assists.second);
-		(*(void (__thiscall **)(SokuLib::CharacterManager *))(*(int *)dataMgr->players[3] + 0x44))(dataMgr->players[3]);
-		players[3] = dataMgr->players[3];
-
 		std::map<std::pair<unsigned, unsigned>, bool> loaded;
 
 		loadAssistData(SokuLib::leftChar, 0);
@@ -2209,6 +2200,20 @@ void __stdcall loadDeckData(char *charName, void *csvFile, SokuLib::DeckInfo &de
 		currentChr.second = ChrInfo();
 		currentChr.second.loadoutIndex = loadouts[3];
 		currentChr.second.chr = assists.second.character;
+
+		SokuLib::CharacterManager** players = (SokuLib::CharacterManager**)((int)&SokuLib::getBattleMgr() + 0xC);
+
+		puts("Not spawned. Loading both assisters");
+		puts("Loading character 1");
+		((void (__thiscall *)(GameDataManager*, int, SokuLib::PlayerInfo &))0x46da40)(dataMgr, 2, assists.first);
+		(*(void (__thiscall **)(SokuLib::CharacterManager *))(*(int *)dataMgr->players[2] + 0x44))(dataMgr->players[2]);
+		players[2] = dataMgr->players[2];
+
+		puts("Loading character 2");
+		((void (__thiscall *)(GameDataManager*, int, SokuLib::PlayerInfo &))0x46da40)(dataMgr, 3, assists.second);
+		(*(void (__thiscall **)(SokuLib::CharacterManager *))(*(int *)dataMgr->players[3] + 0x44))(dataMgr->players[3]);
+		players[3] = dataMgr->players[3];
+
 		init = false;
 		printf("%p %p\n", dataMgr->players[2], dataMgr->players[3]);
 		// Init
